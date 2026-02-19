@@ -1,131 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Interactivo - Pizzas</title>
-    <style>
-        :root { --accent: #ff4d4d; --success: #25D366; --bg: #121212; --card: #1e1e1e; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; padding: 15px; }
-        .container { max-width: 500px; margin: auto; padding-bottom: 80px; }
-        h2 { text-align: center; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #888; font-size: 0.8rem; margin-bottom: 25px; }
-        
-        .pizza-card {
-            background: var(--card); border-radius: 12px; margin-bottom: 15px;
-            display: flex; align-items: center; border: 1px solid #333;
-            overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .pizza-img { width: 95px; height: 95px; object-fit: cover; border-right: 1px solid #333; }
-        .pizza-info { padding: 12px; flex: 1; }
-        .pizza-info h3 { margin: 0; font-size: 1rem; color: #fff; font-weight: 600; }
-        
-        .price-container { display: flex; gap: 8px; margin-top: 10px; }
-        /* Estilo de botones de precio */
-        .price-tag {
-            background: #262626; padding: 8px 4px; border-radius: 8px;
-            flex: 1; text-align: center; border: 1px solid #444;
-            cursor: pointer; text-decoration: none; transition: 0.3s;
-            display: block;
-        }
-        .price-tag:hover { background: #333; border-color: var(--success); transform: translateY(-2px); }
-        .price-tag small { display: block; font-size: 0.6rem; color: #aaa; text-transform: uppercase; margin-bottom: 2px; }
-        .price-tag b { color: var(--success); font-size: 0.85rem; display: block; }
-
-        .footer-info { text-align: center; font-size: 0.7rem; color: #555; margin-top: 20px; }
-        
-        /* BOTÓN FLOTANTE MANTENIDO */
-        .btn-whatsapp-float {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--success); width: 60px; height: 60px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 1000;
-            transition: transform 0.3s;
-        }
-        .btn-whatsapp-float:hover { transform: scale(1.1); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú de Pizzas</title>
+  <style>
+    body { margin: 0; padding: 1rem; background: #111; }
+    .menu-container { max-width: 960px; margin: 0 auto; padding: 1rem; font-family: system-ui, sans-serif; background: #1b1b1b; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+    .menu-header { text-align: center; margin-bottom: 1.5rem; }
+    .menu-header h2 { font-size: 2rem; margin: 0 0 .25rem; color: #f5f5f5; }
+    .menu-header p { font-size: .95rem; color: #bdbdbd; margin: 0; }
+    .pizza-item { display: flex; gap: 1rem; align-items: center; padding: 1rem 0; border-bottom: 1px solid #333; }
+    .pizza-item:last-child { border-bottom: 0; }
+    .pizza-item img { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+    .pizza-details { flex: 1; }
+    .pizza-details h3 { margin: 0 0 .35rem; font-size: 1.2rem; color: #ff6b6b; }
+    .pizza-details p { margin: .15rem 0; color: #e6e6e6; font-size: .9rem; }
+    .price-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .pill { background: #262626; border: 1px solid #3a3a3a; padding: .4rem .8rem; border-radius: 999px; color: #d9ffd9; font-weight: 700; font-size: .95rem; }
+    .pill small { color: #a0a0a0; font-weight: 400; margin-right: .3rem; }
+    .updated-at { text-align: center; color: #666; font-size: .8rem; margin-top: 1rem; }
+    .loading { text-align: center; color: #bdbdbd; padding: 2rem; }
+    .error { text-align: center; color: #ffd6d6; padding: 2rem; }
+    .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 999; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
+    .whatsapp-float:hover { transform: scale(1.08); }
+    .whatsapp-float img { width: 35px; height: 35px; }
+    @media (max-width: 640px) { .pizza-item { align-items: flex-start; } .pizza-item img { width: 90px; height: 90px; } }
+  </style>
 </head>
 <body>
 
-<div class="container">
+<div class="menu-container">
+  <div class="menu-header">
     <h2>🍕 Menú de Pizzas</h2>
-    <p class="subtitle">Toca un precio para ordenar directamente</p>
-    
-    <div id="pizzas-render">Cargando menú desde la nube...</div>
-    
-    <div class="footer-info" id="status">Sincronizando precios...</div>
+    <p>AUTÉNTICAS PIZZAS ARTESANALES ITALIANAS<br>
+    Hechas con masa casera, ingredientes frescos y ese sabor que te hace volver una y otra vez. <strong style="color:#ff6b6b">DELIVERY GRATIS</strong></p>
+  </div>
+  <div id="pizzaList" class="loading">Cargando menú...</div>
+  <div class="updated-at" id="updatedAt"></div>
 </div>
 
-<a href="https://wa.me/584264014765?text=Hola!%20Tengo%20una%20consulta%20sobre%20el%20menú" class="btn-whatsapp-float" target="_blank" title="Chatear con nosotros">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="WhatsApp">
+<a href="https://wa.me/584264014765?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20pizza%20🍕"
+   target="_blank" class="whatsapp-float" title="Pedir por WhatsApp">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
 </a>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxogztBYkgerNWGcPlNryposKITTqDbB9RRoCHOMehYMbwFm3tN4KoLBcM2_y0eoAMX/exec";
-    const PHONE = "584264014765";
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzK6LOP7NgM-PRE0s4M4AAZNFJzOWzniRkjPI2o53C2PrWISnaepnapxTdMtlenXBwO/exec';
 
-    // Índices basados en tu captura de pantalla de Google Sheets
-    const MENU_PIZZAS = [
-        { name: "Margherita Romana", i35: 206, i20: 218 },
-        { name: "Primavera Napolitana", i35: 207, i20: 219 },
-        { name: "Vegetariana Milanesa", i35: 208, i20: 220 },
-        { name: "Pizza Della Casa", i35: 209, i20: 221 },
-        { name: "Peperoni Siciliana", i35: 210, i20: 222 },
-        { name: "Hawaiana Vesuviana", i35: 211, i20: 223 },
-        { name: "Maíz Florentina", i35: 212, i20: 224 },
-        { name: "Capresa Marianella", i35: 213, i20: 225 },
-        { name: "Pollo Toscano", i35: 214, i20: 226 }
-    ];
+const IMG_DEFAULT = 'https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg';
 
-    function formatPrice(val) {
-        if (!val) return "---";
-        let clean = String(val).replace(/[Bs.]/g, '').replace(',', '.').trim();
-        let num = parseFloat(clean);
-        return isNaN(num) ? val : "Bs " + Math.round(num).toLocaleString('es-VE');
-    }
+const META = {
+  "Margherita Romana":    { desc: "Salsa napolitana, mozzarella, jamón.", img: IMG_DEFAULT },
+  "Primavera Napolitana": { desc: "Salsa napolitana, mozzarella, jamón, maíz.", img: IMG_DEFAULT },
+  "Vegetariana Milanesa": { desc: "Salsa napolitana, mozzarella, champiñones, aceitunas, pimentón.", img: IMG_DEFAULT },
+  "Peperoni Siciliana":   { desc: "Salsa napolitana, mozzarella, pepperoni.", img: "https://www.novachef.es/media/images/pizza-pepperoni.jpg" },
+  "Pizza Della Casa":     { desc: "Salsa napolitana, mozzarella, jamón y pepperoni.", img: IMG_DEFAULT },
+  "Hawaiana Vesuviana":   { desc: "Salsa napolitana, mozzarella, jamón y piña.", img: IMG_DEFAULT },
+  "Maíz Florentina":      { desc: "Salsa napolitana, mozzarella, jamón y maíz.", img: IMG_DEFAULT },
+  "Capresa Marianella":   { desc: "Salsa napolitana, mozzarella, tomate y jamón.", img: IMG_DEFAULT },
+  "Pollo Toscano":        { desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz.", img: IMG_DEFAULT }
+};
 
-    // Función para crear el enlace de pedido automático
-    function getOrderLink(pizza, size) {
-        const text = encodeURIComponent(`Hola! 🍕 Quiero pedir una pizza *${pizza}* de *${size}*`);
-        return `https://wa.me/${PHONE}?text=${text}`;
-    }
+function formatBs(valor) {
+  if (!valor && valor !== 0) return 'N/D';
+  const num = parseFloat(String(valor).replace(/[^0-9.]/g, ''));
+  if (isNaN(num)) return String(valor);
+  return 'Bs ' + Math.round(num).toLocaleString('es-VE');
+}
 
-    fetch(SCRIPT_URL)
+function renderPizzas(data) {
+  const lista = document.getElementById('pizzaList');
+  lista.className = '';
+  lista.innerHTML = '';
+
+  data.forEach(pizza => {
+    const meta = META[pizza.nombre] || { desc: 'Pizza artesanal.', img: IMG_DEFAULT };
+    const div = document.createElement('div');
+    div.className = 'pizza-item';
+    div.innerHTML =
+      '<img src="' + meta.img + '" alt="' + pizza.nombre + '" onerror="this.src=\'' + IMG_DEFAULT + '\'">' +
+      '<div class="pizza-details">' +
+        '<h3>' + pizza.nombre + '</h3>' +
+        '<p>' + meta.desc + '</p>' +
+        '<div class="price-row">' +
+          '<span class="pill"><small>20 cm</small>' + formatBs(pizza.p20) + '</span>' +
+          '<span class="pill"><small>35 cm</small>' + formatBs(pizza.p35) + '</span>' +
+        '</div>' +
+      '</div>';
+    lista.appendChild(div);
+  });
+
+  document.getElementById('updatedAt').textContent =
+    'Actualizado: ' + new Date().toLocaleString('es-VE');
+}
+
+function cargarPizzas() {
+  fetch(SCRIPT_URL)
     .then(r => r.json())
     .then(data => {
-        const renderArea = document.getElementById('pizzas-render');
-        renderArea.innerHTML = '';
-
-        MENU_PIZZAS.forEach(pizza => {
-            const p35Value = data[pizza.i35];
-            const p20Value = data[pizza.i20];
-            
-            const p35Formatted = formatPrice(p35Value);
-            const p20Formatted = formatPrice(p20Value);
-
-            renderArea.innerHTML += `
-                <div class="pizza-card">
-                    <img src="https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg" class="pizza-img">
-                    <div class="pizza-info">
-                        <h3>${pizza.name}</h3>
-                        <div class="price-container">
-                            <a href="${getOrderLink(pizza.name, '20 cm')}" target="_blank" class="price-tag">
-                                <small>20 cm</small><b>${p20Formatted}</b>
-                            </a>
-                            <a href="${getOrderLink(pizza.name, '35 cm')}" target="_blank" class="price-tag">
-                                <small>35 cm</small><b>${p35Formatted}</b>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        document.getElementById('status').innerText = "Precios en tiempo real | " + new Date().toLocaleTimeString();
+      if (!Array.isArray(data) || data.length === 0) throw new Error('Sin datos');
+      renderPizzas(data);
     })
     .catch(err => {
-        console.error(err);
-        document.getElementById('pizzas-render').innerHTML = "<p style='text-align:center;'>Error de conexión. Revisa tu Google Sheet.</p>";
+      console.error(err);
+      document.getElementById('pizzaList').className = 'error';
+      document.getElementById('pizzaList').textContent = 'Error al cargar el menú. Recarga la página.';
     });
+}
+
+cargarPizzas();
+setInterval(cargarPizzas, 5 * 60 * 1000);
 </script>
+
 </body>
 </html>
