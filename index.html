@@ -17,8 +17,26 @@
     .pizza-details h3 { margin: 0 0 .35rem; font-size: 1.2rem; color: #ff6b6b; }
     .pizza-details p { margin: .15rem 0; color: #e6e6e6; font-size: .9rem; }
     .price-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
-    .pill { background: #262626; border: 1px solid #3a3a3a; padding: .4rem .8rem; border-radius: 999px; color: #d9ffd9; font-weight: 700; font-size: .95rem; }
+    .pill {
+      background: #262626;
+      border: 1px solid #3a3a3a;
+      padding: .4rem .8rem;
+      border-radius: 999px;
+      color: #d9ffd9;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .pill:hover { background: #25d366; color: #fff; border-color: #25d366; transform: scale(1.05); }
+    .pill:active { transform: scale(0.97); }
     .pill small { color: #a0a0a0; font-weight: 400; margin-right: .3rem; }
+    .pill:hover small { color: #d0ffd0; }
+    .pill .wp-icon { width: 16px; height: 16px; opacity: 0.7; }
     .updated-at { text-align: center; color: #666; font-size: .8rem; margin-top: 1rem; }
     .loading { text-align: center; color: #bdbdbd; padding: 2rem; }
     .error { text-align: center; color: #ffd6d6; padding: 2rem; }
@@ -35,6 +53,7 @@
     <h2>🍕 Menú de Pizzas</h2>
     <p>AUTÉNTICAS PIZZAS ARTESANALES ITALIANAS<br>
     Hechas con masa casera, ingredientes frescos y ese sabor que te hace volver una y otra vez. <strong style="color:#ff6b6b">DELIVERY GRATIS</strong></p>
+    <p style="margin-top:.5rem;color:#a0a0a0;font-size:.85rem">👆 Toca el precio para hacer tu pedido por WhatsApp</p>
   </div>
   <div id="pizzaList" class="loading">Cargando menú...</div>
   <div class="updated-at" id="updatedAt"></div>
@@ -47,7 +66,7 @@
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6E4A2NfCdgK6Yx37ySidD_JYUctZ4QZ9pKMF5XTg86a8_FIm1HmZgKPwtGe89Vet6/exec';
-
+const WA_NUMBER = '584264014765';
 const IMG_DEFAULT = 'https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg';
 
 const META = {
@@ -69,6 +88,15 @@ function formatBs(valor) {
   return 'Bs ' + Math.round(num).toLocaleString('es-VE');
 }
 
+function waLink(nombre, tamano, precio) {
+  const msg = '🍕 Hola! Quiero pedir:\n\n' +
+              '▪️ Pizza: ' + nombre + '\n' +
+              '▪️ Tamaño: ' + tamano + '\n' +
+              '▪️ Precio: ' + precio + '\n\n' +
+              '¿Está disponible? 😊';
+  return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+}
+
 function renderPizzas(data) {
   const lista = document.getElementById('pizzaList');
   lista.className = '';
@@ -76,6 +104,9 @@ function renderPizzas(data) {
 
   data.forEach(pizza => {
     const meta = META[pizza.nombre] || { desc: 'Pizza artesanal.', img: IMG_DEFAULT };
+    const p20 = formatBs(pizza.p20);
+    const p35 = formatBs(pizza.p35);
+
     const div = document.createElement('div');
     div.className = 'pizza-item';
     div.innerHTML =
@@ -84,8 +115,14 @@ function renderPizzas(data) {
         '<h3>' + pizza.nombre + '</h3>' +
         '<p>' + meta.desc + '</p>' +
         '<div class="price-row">' +
-          '<span class="pill"><small>20 cm</small>' + formatBs(pizza.p20) + '</span>' +
-          '<span class="pill"><small>35 cm</small>' + formatBs(pizza.p35) + '</span>' +
+          '<a class="pill" href="' + waLink(pizza.nombre, '20 cm', p20) + '" target="_blank">' +
+            '<small>20 cm</small>' + p20 +
+            ' <img class="wp-icon" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">' +
+          '</a>' +
+          '<a class="pill" href="' + waLink(pizza.nombre, '35 cm', p35) + '" target="_blank">' +
+            '<small>35 cm</small>' + p35 +
+            ' <img class="wp-icon" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg">' +
+          '</a>' +
         '</div>' +
       '</div>';
     lista.appendChild(div);
