@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menú de Pizzas</title>
   <style>
-    body {
-      margin: 0;
-      padding: 1rem;
-      background: #111;
-    }
-
+    body { margin: 0; padding: 1rem; background: #111; }
     .menu-container{max-width:960px;margin:0 auto;padding:1rem;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#1b1b1b;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
     .menu-header{text-align:center;margin-bottom:1rem}
     .menu-header h2{font-size:2rem;margin:0 0 .25rem;color:#f5f5f5}
@@ -26,45 +21,26 @@
     .pill small{color:#a0a0a0;font-weight:500;margin-right:.35rem}
     .pill.error{color:#ffd6d6;border-color:#5a2f2f}
     .updated-at{text-align:center;color:#9f9f9f;font-size:.85rem;margin-top:.5rem}
-
-    .whatsapp-float {
-      position: fixed;
-      width: 60px;
-      height: 60px;
-      bottom: 20px;
-      right: 20px;
-      background-color: #25d366;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease;
-    }
-    .whatsapp-float:hover { transform: scale(1.08); }
-    .whatsapp-float img { width: 35px; height: 35px; }
-
-    @media (max-width:640px){.pizza-item{align-items:flex-start}.pizza-item img{width:96px;height:96px}}
+    .whatsapp-float{position:fixed;width:60px;height:60px;bottom:20px;right:20px;background-color:#25d366;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3);z-index:999;display:flex;align-items:center;justify-content:center;transition:transform 0.2s ease;}
+    .whatsapp-float:hover{transform:scale(1.08);}
+    .whatsapp-float img{width:35px;height:35px;}
+    @media(max-width:640px){.pizza-item{align-items:flex-start}.pizza-item img{width:96px;height:96px}}
   </style>
 </head>
 <body>
 
 <div class="menu-container">
   <div class="menu-header">
-    <h2>Menú de Pizzas</h2>
+    <h2>🍕 Menú de Pizzas</h2>
     <p>AUTÉNTICAS PIZZAS ARTESANALES ITALIANAS<br>
     Hechas con masa casera, ingredientes frescos y ese sabor que te hace volver una y otra vez. DELIVERY GRATIS.</p>
   </div>
-  <div id="pizzaList"></div>
+  <div id="pizzaList"><p style="color:#bdbdbd;text-align:center">Cargando menú...</p></div>
   <div class="updated-at" id="updatedAt"></div>
 </div>
 
-<!-- Botón flotante de WhatsApp -->
 <a href="https://wa.me/584264014765?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20pizza%20🍕"
-   target="_blank"
-   class="whatsapp-float"
-   title="Escríbenos por WhatsApp">
+   target="_blank" class="whatsapp-float" title="Escríbenos por WhatsApp">
    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
 </a>
 
@@ -79,7 +55,7 @@
     "Peperoni Siciliana":   { img: "https://www.novachef.es/media/images/pizza-pepperoni.jpg", desc: "Salsa napolitana, queso mozzarella, pepperoni." },
     "Pizza Della Casa":     { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y pepperoni." },
     "Hawaiana Vesuviana":   { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y piña." },
-    "Maíz Florentina":      { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y maíz." },
+    "Maiz Florentina":      { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y maíz." },
     "Capresa Marianella":   { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, tomate y jamón." },
     "Pollo Toscano":        { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz." }
   };
@@ -87,23 +63,36 @@
   const DEFAULT_IMG  = "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg";
   const DEFAULT_DESC = "Pizza de la casa con ingredientes seleccionados.";
 
-  const norm        = s => (s||'').toString().trim().toLowerCase();
-  const stripAccents= s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const normName    = s => stripAccents(norm(s)).replace(/\s+/g,' ');
-  const looksLikePrice = v => v != null && /[0-9]/.test(String(v));
+  const norm         = s => (s||'').toString().trim().toLowerCase();
+  const stripAccents = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const normName     = s => stripAccents(norm(s)).replace(/\s+/g,' ');
+
+  // Acepta precios con "Bs" como prefijo (ej: Bs5.799) o numeros puros
+  const looksLikePrice = v => {
+    if (v == null) return false;
+    const s = String(v).trim();
+    return /^Bs[\d.,]+$/.test(s) || /^\d/.test(s);
+  };
+
   const toMoney = v => {
     if (v == null) return '';
-    let s = String(v).trim();
+    const s = String(v).trim();
     if (!s) return '';
-    if (/^\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.');
-    if (!isNaN(s)) return Number(s).toFixed(2);
+    if (s.startsWith('Bs')) return s;
+    if (!isNaN(s)) return 'Bs ' + Number(s).toFixed(2);
     return s;
   };
 
-  function renderList(dataMap){
+  function renderList(dataMap) {
     const list = document.getElementById('pizzaList');
     list.innerHTML = '';
-    const names = [...dataMap.keys()].sort((a,b)=>a.localeCompare(b));
+
+    if (dataMap.size === 0) {
+      list.innerHTML = '<p style="color:#ffd6d6;text-align:center">No se encontraron pizzas en el menú.</p>';
+      return;
+    }
+
+    const names = [...dataMap.keys()].sort((a,b) => a.localeCompare(b));
     names.forEach(key => {
       const rec  = dataMap.get(key);
       const meta = META[rec.original] || {};
@@ -111,50 +100,61 @@
       const desc = meta.desc || DEFAULT_DESC;
       const p20  = rec.p20 ? toMoney(rec.p20) : '';
       const p35  = rec.p35 ? toMoney(rec.p35) : '';
+
       const wrap = document.createElement('div');
       wrap.className = 'pizza-item';
-      wrap.innerHTML = `
-        <img src="${img}" alt="${rec.original}">
-        <div class="pizza-details">
-          <h3>${rec.original}</h3>
-          <p>${desc}</p>
-          <div class="price-row">
-            <span class="pill ${p20 ? '' : 'error'}"><small>20 cm</small> ${p20 || 'No disponible'}</span>
-            <span class="pill ${p35 ? '' : 'error'}"><small>35 cm</small> ${p35 || 'No disponible'}</span>
-          </div>
-        </div>`;
+      wrap.innerHTML =
+        '<img src="' + img + '" alt="' + rec.original + '" onerror="this.src=\'' + DEFAULT_IMG + '\'">' +
+        '<div class="pizza-details">' +
+          '<h3>' + rec.original + '</h3>' +
+          '<p>' + desc + '</p>' +
+          '<div class="price-row">' +
+            '<span class="pill ' + (p20 ? '' : 'error') + '"><small>20 cm</small> ' + (p20 || 'No disponible') + '</span>' +
+            '<span class="pill ' + (p35 ? '' : 'error') + '"><small>35 cm</small> ' + (p35 || 'No disponible') + '</span>' +
+          '</div>' +
+        '</div>';
       list.appendChild(wrap);
     });
   }
 
-  async function actualizarPrecios(){
+  async function actualizarPrecios() {
     try {
-      const resp = await fetch(SHEET_URL + '?_=' + Date.now(), {cache:'no-store'});
+      const resp = await fetch(SHEET_URL + '?_=' + Date.now(), { cache: 'no-store' });
       const rows = await resp.json();
-      if (!Array.isArray(rows) || !rows.length) throw new Error('Hoja vacía');
+      if (!Array.isArray(rows) || !rows.length) throw new Error('Hoja vacia');
+
       const headerOrder = Object.keys(rows[0]);
       const get = (row, pos) => row[headerOrder[pos]];
+
       let currentSize = null;
       const map = new Map();
+
       for (const r of rows) {
-        const a = get(r,0), b = get(r,1), c = get(r,2), d = get(r,3);
+        const a = get(r, 0), b = get(r, 1), c = get(r, 2), d = get(r, 3);
         const an = norm(a), bn = norm(b);
+
         if (an.includes('pizza') && bn.includes('35')) { currentSize = '35'; continue; }
         if (an.includes('pizza') && bn.includes('20')) { currentSize = '20'; continue; }
-        if (!a) continue;
-        const price = [b,c,d].find(looksLikePrice);
-        if (!currentSize || price==null) continue;
+        if (!a || !currentSize) continue;
+
+        const price = [b, c, d].find(looksLikePrice);
+        if (price == null) continue;
+
         const key = normName(a);
-        if (!map.has(key)) map.set(key, { original: String(a).trim(), p20:'', p35:'' });
-        if (currentSize==='20') map.get(key).p20 = String(price).trim();
-        if (currentSize==='35') map.get(key).p35 = String(price).trim();
+        if (!map.has(key)) map.set(key, { original: String(a).trim(), p20: '', p35: '' });
+        if (currentSize === '20') map.get(key).p20 = String(price).trim();
+        if (currentSize === '35') map.get(key).p35 = String(price).trim();
       }
+
       renderList(map);
+
       const updated = document.getElementById('updatedAt');
-      if (updated) updated.textContent = `Última actualización: ${new Date().toLocaleString()}`;
-    } catch(e) {
+      if (updated) updated.textContent = 'Ultima actualizacion: ' + new Date().toLocaleString();
+
+    } catch (e) {
       console.error(e);
-      document.getElementById('pizzaList').innerHTML = '<p style="color:#ffd6d6">No se pudo cargar el menú.</p>';
+      document.getElementById('pizzaList').innerHTML =
+        '<p style="color:#ffd6d6;text-align:center">No se pudo cargar el menu. Intenta recargar la pagina.</p>';
     }
   }
 
