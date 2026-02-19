@@ -1,321 +1,167 @@
-<!-- Menú de pizzas (oscuro) AUTOGENERADO desde Google Sheets (bloques 20 cm y 35 cm) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú de Pizzas</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: #111;
+    }
 
-<style>
+    .menu-container{max-width:960px;margin:0 auto;padding:1rem;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#1b1b1b;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+    .menu-header{text-align:center;margin-bottom:1rem}
+    .menu-header h2{font-size:2rem;margin:0 0 .25rem;color:#f5f5f5}
+    .menu-header p{font-size:.95rem;color:#bdbdbd;margin:0}
+    .pizza-item{display:flex;gap:1rem;align-items:center;padding:1rem 0;border-bottom:1px solid #333}
+    .pizza-item:last-child{border-bottom:0}
+    .pizza-item img{width:120px;height:120px;object-fit:cover;border-radius:10px}
+    .pizza-details{flex:1;min-width:0}
+    .pizza-details h3{margin:0 0 .35rem;font-size:1.25rem;color:#ff6b6b}
+    .pizza-details p{margin:.15rem 0;color:#e6e6e6}
+    .price-row{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.35rem}
+    .pill{background:#262626;border:1px solid #3a3a3a;padding:.4rem .6rem;border-radius:999px;color:#d9ffd9;font-weight:600;font-size:.95rem;white-space:nowrap}
+    .pill small{color:#a0a0a0;font-weight:500;margin-right:.35rem}
+    .pill.error{color:#ffd6d6;border-color:#5a2f2f}
+    .updated-at{text-align:center;color:#9f9f9f;font-size:.85rem;margin-top:.5rem}
 
-  .menu-container{max-width:960px;margin:0 auto;padding:1rem;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#1b1b1b;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+    .whatsapp-float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .whatsapp-float:hover { transform: scale(1.08); }
+    .whatsapp-float img { width: 35px; height: 35px; }
 
-  .menu-header{text-align:center;margin-bottom:1rem}
-
-  .menu-header h2{font-size:2rem;margin:0 0 .25rem;color:#f5f5f5}
-
-  .menu-header p{font-size:.95rem;color:#bdbdbd;margin:0}
-
-  .pizza-item{display:flex;gap:1rem;align-items:center;padding:1rem 0;border-bottom:1px solid #333}
-
-  .pizza-item:last-child{border-bottom:0}
-
-  .pizza-item img{width:120px;height:120px;object-fit:cover;border-radius:10px}
-
-  .pizza-details{flex:1;min-width:0}
-
-  .pizza-details h3{margin:0 0 .35rem;font-size:1.25rem;color:#ff6b6b}
-
-  .pizza-details p{margin:.15rem 0;color:#e6e6e6}
-
-  .price-row{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.35rem}
-
-  .pill{background:#262626;border:1px solid #3a3a3a;padding:.4rem .6rem;border-radius:999px;color:#d9ffd9;font-weight:600;font-size:.95rem;white-space:nowrap}
-
-  .pill small{color:#a0a0a0;font-weight:500;margin-right:.35rem}
-
-  .pill.error{color:#ffd6d6;border-color:#5a2f2f}
-
-  .updated-at{text-align:center;color:#9f9f9f;font-size:.85rem;margin-top:.5rem}
-
-  @media (max-width:640px){.pizza-item{align-items:flex-start}.pizza-item img{width:96px;height:96px}}
-
-</style>
+    @media (max-width:640px){.pizza-item{align-items:flex-start}.pizza-item img{width:96px;height:96px}}
+  </style>
+</head>
+<body>
 
 <div class="menu-container">
-
   <div class="menu-header">
-
     <h2>Menú de Pizzas</h2>
-
-    <p>AUTÉNTICAS PIZZAS ARTESANALES ITALIANAS
-
-Hechas con masa casera, ingredientes frescos y ese sabor que te hace volver una y otra vez.DELIVERY GRATIS.</p>
-
+    <p>AUTÉNTICAS PIZZAS ARTESANALES ITALIANAS<br>
+    Hechas con masa casera, ingredientes frescos y ese sabor que te hace volver una y otra vez. DELIVERY GRATIS.</p>
   </div>
-
-  <!-- Aquí se inyectarán las pizzas automáticamente -->
-
   <div id="pizzaList"></div>
-
   <div class="updated-at" id="updatedAt"></div>
-
 </div>
 
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/584264014765?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20pizza%20🍕"
+   target="_blank"
+   class="whatsapp-float"
+   title="Escríbenos por WhatsApp">
+   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
 <script>
-
 (() => {
-
   const SHEET_URL = 'https://opensheet.elk.sh/1rh_iHH-kNJqWL5nff7fcvRwHXAZTj5vpyalKkuyppUM/Hoja%201';
 
-  // Opcional: imágenes y descripciones por nombre
-
   const META = {
-
-    "Margherita Romana": {
-
-      img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg",
-
-      desc: "Salsa napolitana, queso mozzarella, jamón."
-
-    },
-
-    "Primavera Napolitana": {
-
-      img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg",
-
-      desc: "Salsa napolitana, queso mozzarella, jamón, maíz."
-
-    },
-
-    "Vegetariana Milanesa": {
-
-      img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg",
-
-      desc: "Salsa napolitana, queso mozzarella, champiñones, aceitunas negras, pimentón."
-
-    },
-
-    "Peperoni Siciliana": {
-
-      img: "https://www.novachef.es/media/images/pizza-pepperoni.jpg",
-
-      desc: "Salsa napolitana, queso mozzarella, pepperoni."
-
-    },
-
-    "Pizza Della Casa": { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y pepperoni." },
-
-    "Hawaiana Vesuviana": { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y piña." },
-
-    "Maíz Florentina":    { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y maíz." },
-
-    "Capresa Marianella": { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, tomate y jamón." },
-
-    "Pollo Toscano":      { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz." }
-
+    "Margherita Romana":    { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, queso mozzarella, jamón." },
+    "Primavera Napolitana": { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, queso mozzarella, jamón, maíz." },
+    "Vegetariana Milanesa": { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, queso mozzarella, champiñones, aceitunas negras, pimentón." },
+    "Peperoni Siciliana":   { img: "https://www.novachef.es/media/images/pizza-pepperoni.jpg", desc: "Salsa napolitana, queso mozzarella, pepperoni." },
+    "Pizza Della Casa":     { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y pepperoni." },
+    "Hawaiana Vesuviana":   { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y piña." },
+    "Maíz Florentina":      { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón y maíz." },
+    "Capresa Marianella":   { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, tomate y jamón." },
+    "Pollo Toscano":        { img: "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg", desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz." }
   };
 
   const DEFAULT_IMG  = "https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg";
-
   const DEFAULT_DESC = "Pizza de la casa con ingredientes seleccionados.";
 
-  const norm = s => (s||'').toString().trim().toLowerCase();
-
-  const stripAccents = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-
-  const normName = s => stripAccents(norm(s)).replace(/\s+/g,' ');
-
+  const norm        = s => (s||'').toString().trim().toLowerCase();
+  const stripAccents= s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const normName    = s => stripAccents(norm(s)).replace(/\s+/g,' ');
   const looksLikePrice = v => v != null && /[0-9]/.test(String(v));
-
   const toMoney = v => {
-
     if (v == null) return '';
-
     let s = String(v).trim();
-
     if (!s) return '';
-
     if (/^\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.');
-
     if (!isNaN(s)) return Number(s).toFixed(2);
-
     return s;
-
   };
 
   function renderList(dataMap){
-
     const list = document.getElementById('pizzaList');
-
     list.innerHTML = '';
-
     const names = [...dataMap.keys()].sort((a,b)=>a.localeCompare(b));
-
     names.forEach(key => {
-
-      const rec = dataMap.get(key);
-
+      const rec  = dataMap.get(key);
       const meta = META[rec.original] || {};
-
-      const img  = meta.img || DEFAULT_IMG;
-
+      const img  = meta.img  || DEFAULT_IMG;
       const desc = meta.desc || DEFAULT_DESC;
-
       const p20  = rec.p20 ? toMoney(rec.p20) : '';
-
       const p35  = rec.p35 ? toMoney(rec.p35) : '';
-
       const wrap = document.createElement('div');
-
       wrap.className = 'pizza-item';
-
       wrap.innerHTML = `
-
         <img src="${img}" alt="${rec.original}">
-
         <div class="pizza-details">
-
           <h3>${rec.original}</h3>
-
           <p>${desc}</p>
-
           <div class="price-row">
-
             <span class="pill ${p20 ? '' : 'error'}"><small>20 cm</small> ${p20 || 'No disponible'}</span>
-
             <span class="pill ${p35 ? '' : 'error'}"><small>35 cm</small> ${p35 || 'No disponible'}</span>
-
           </div>
-
         </div>`;
-
       list.appendChild(wrap);
-
     });
-
   }
 
   async function actualizarPrecios(){
-
-    try{
-
+    try {
       const resp = await fetch(SHEET_URL + '?_=' + Date.now(), {cache:'no-store'});
-
       const rows = await resp.json();
-
       if (!Array.isArray(rows) || !rows.length) throw new Error('Hoja vacía');
-
       const headerOrder = Object.keys(rows[0]);
-
       const get = (row, pos) => row[headerOrder[pos]];
-
       let currentSize = null;
-
       const map = new Map();
-
       for (const r of rows) {
-
         const a = get(r,0), b = get(r,1), c = get(r,2), d = get(r,3);
-
         const an = norm(a), bn = norm(b);
-
         if (an.includes('pizza') && bn.includes('35')) { currentSize = '35'; continue; }
-
         if (an.includes('pizza') && bn.includes('20')) { currentSize = '20'; continue; }
-
         if (!a) continue;
-
         const price = [b,c,d].find(looksLikePrice);
-
         if (!currentSize || price==null) continue;
-
         const key = normName(a);
-
         if (!map.has(key)) map.set(key, { original: String(a).trim(), p20:'', p35:'' });
-
-        if (currentSize==='20') { map.get(key).p20 = String(price).trim(); }
-
-        if (currentSize==='35') { map.get(key).p35 = String(price).trim(); }
-
+        if (currentSize==='20') map.get(key).p20 = String(price).trim();
+        if (currentSize==='35') map.get(key).p35 = String(price).trim();
       }
-
       renderList(map);
-
       const updated = document.getElementById('updatedAt');
-
       if (updated) updated.textContent = `Última actualización: ${new Date().toLocaleString()}`;
-
-    } catch(e){
-
+    } catch(e) {
       console.error(e);
-
       document.getElementById('pizzaList').innerHTML = '<p style="color:#ffd6d6">No se pudo cargar el menú.</p>';
-
     }
-
   }
 
   document.addEventListener('DOMContentLoaded', actualizarPrecios);
-
   setInterval(actualizarPrecios, 5 * 60 * 1000);
-
 })();
-
 </script>
 
-<!-- Botón flotante de WhatsApp -->
-
-<a href="https://wa.me/584264014765?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20pizza%20🍕" 
-
-   target="_blank" 
-
-   class="whatsapp-float" 
-
-   title="Escríbenos por WhatsApp">
-
-   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-
-</a>
-
-<style>
-
-.whatsapp-float {
-
-  position: fixed;
-
-  width: 60px;
-
-  height: 60px;
-
-  bottom: 20px;
-
-  right: 20px;
-
-  background-color: #25d366;
-
-  border-radius: 50%;
-
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-
-  z-index: 999;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  transition: transform 0.2s ease;
-
-}
-
-.whatsapp-float:hover {
-
-  transform: scale(1.08);
-
-}
-
-.whatsapp-float img {
-
-  width: 35px;
-
-  height: 35px;
-
-}
-
-</style>
+</body>
+</html>
