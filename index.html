@@ -18,19 +18,10 @@
     .pizza-details p { margin: .15rem 0; color: #e6e6e6; font-size: .9rem; }
     .price-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
     .pill {
-      background: #262626;
-      border: 1px solid #3a3a3a;
-      padding: .4rem .8rem;
-      border-radius: 999px;
-      color: #d9ffd9;
-      font-weight: 700;
-      font-size: .95rem;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      transition: background 0.2s, transform 0.1s;
+      background: #262626; border: 1px solid #3a3a3a; padding: .4rem .8rem;
+      border-radius: 999px; color: #d9ffd9; font-weight: 700; font-size: .95rem;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+      gap: .3rem; transition: background 0.2s, transform 0.1s;
     }
     .pill:hover { background: #25d366; color: #fff; border-color: #25d366; transform: scale(1.05); }
     .pill:active { transform: scale(0.97); }
@@ -67,18 +58,45 @@
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6E4A2NfCdgK6Yx37ySidD_JYUctZ4QZ9pKMF5XTg86a8_FIm1HmZgKPwtGe89Vet6/exec';
 const WA_NUMBER = '584264014765';
-const IMG_DEFAULT = 'https://img.freepik.com/fotos-premium/caja-pizza-pizzas-medio_1270925-1737.jpg';
+const IMG_DEFAULT = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&q=80';
 
 const META = {
-  "Margherita Romana":    { desc: "Salsa napolitana, mozzarella, jamón.", img: IMG_DEFAULT },
-  "Primavera Napolitana": { desc: "Salsa napolitana, mozzarella, jamón, maíz.", img: IMG_DEFAULT },
-  "Vegetariana Milanesa": { desc: "Salsa napolitana, mozzarella, champiñones, aceitunas, pimentón.", img: IMG_DEFAULT },
-  "Peperoni Siciliana":   { desc: "Salsa napolitana, mozzarella, pepperoni.", img: "https://www.novachef.es/media/images/pizza-pepperoni.jpg" },
-  "Pizza Della Casa":     { desc: "Salsa napolitana, mozzarella, jamón y pepperoni.", img: IMG_DEFAULT },
-  "Hawaiana Vesuviana":   { desc: "Salsa napolitana, mozzarella, jamón y piña.", img: IMG_DEFAULT },
-  "Maíz Florentina":      { desc: "Salsa napolitana, mozzarella, jamón y maíz.", img: IMG_DEFAULT },
-  "Capresa Marianella":   { desc: "Salsa napolitana, mozzarella, tomate y jamón.", img: IMG_DEFAULT },
-  "Pollo Toscano":        { desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz.", img: IMG_DEFAULT }
+  "Margherita Romana": {
+    desc: "Salsa napolitana, mozzarella, jamón.",
+    img: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&q=80"
+  },
+  "Primavera Napolitana": {
+    desc: "Salsa napolitana, mozzarella, jamón, maíz.",
+    img: "https://images.unsplash.com/photo-1555072956-7758afb20e8f?w=300&q=80"
+  },
+  "Vegetariana Milanesa": {
+    desc: "Salsa napolitana, mozzarella, champiñones, aceitunas, pimentón.",
+    img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80"
+  },
+  "Peperoni Siciliana": {
+    desc: "Salsa napolitana, mozzarella, pepperoni.",
+    img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=300&q=80"
+  },
+  "Pizza Della Casa": {
+    desc: "Salsa napolitana, mozzarella, jamón y pepperoni.",
+    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&q=80"
+  },
+  "Hawaiana Vesuviana": {
+    desc: "Salsa napolitana, mozzarella, jamón y piña.",
+    img: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=300&q=80"
+  },
+  "Maíz Florentina": {
+    desc: "Salsa napolitana, mozzarella, jamón y maíz.",
+    img: "https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=300&q=80"
+  },
+  "Capresa Marianella": {
+    desc: "Salsa napolitana, mozzarella, tomate y jamón.",
+    img: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=300&q=80"
+  },
+  "Pollo Toscano": {
+    desc: "Salsa napolitana, mozzarella, jamón, pollo, tocineta, maíz.",
+    img: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=300&q=80"
+  }
 };
 
 function formatBs(valor) {
